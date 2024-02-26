@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joe's Hotdogs Menu</title>
+</head>
+<body>
+    <h1>Joe's Hotdogs Menu</h1>
+
+    <!-- Using a JSON object -->
+    <h2>Menu using a JSON object</h2>
+    <ul id="menu-json"></ul>
+
+    <!-- Text input and Add to Cart button -->
+    <input type="text" id="item-name" placeholder="Enter item name">
+    <button onclick="addToCart()">Add to Cart</button>
+
+    <!-- Shopping cart area -->
+    <div id="shopping-cart">
+        <h2>Shopping Cart</h2>
+        <ul id="cart-items"></ul>
+        <button onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        // Associative array to store menu items and quantities
+        const cart = {
+            "hotdog": 0,
+            "fries": 0,
+            "soda": 0,
+            "sauerkraut": 0
+        };
+
+        // Menu item prices
+        const menuPrices = {
+            "hotdog": 4,
+            "fries": 3.50,
+            "soda": 1.50,
+            "sauerkraut": 1
+        };
+
+        // Function to display menu using a JSON object
+        function displayMenuJSON() {
+            const menuJSON = '{"hotdog": 4, "fries": 3.50, "soda": 1.50, "sauerkraut": 1}';
+            const menu = JSON.parse(menuJSON);
+            const menuListJSON = document.getElementById('menu-json');
+
+            for (const item in menu) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item}: $${menu[item].toFixed(2)}`;
+                menuListJSON.appendChild(listItem);
+            }
+        }
+
+        // Function to add item to cart
+        function addToCart() {
+            const itemName = document.getElementById('item-name').value.toLowerCase();
+            if (cart.hasOwnProperty(itemName)) {
+                cart[itemName]++;
+                updateCartDisplay();
+            } else {
+                alert("Item not found in menu!");
+            }
+            // Clear input field after adding item to cart
+            document.getElementById('item-name').value = "";
+        }
+
+        // Function to update cart display
+        function updateCartDisplay() {
+            const cartItemsList = document.getElementById('cart-items');
+            cartItemsList.innerHTML = '';
+            for (const item in cart) {
+                if (cart[item] > 0) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${item}: ${cart[item]}`;
+                    cartItemsList.appendChild(listItem);
+                }
+            }
+        }
+
+        // Function to handle checkout
+        function checkout() {
+            let totalOrderCost = 0;
+            let checkoutMessage = "Items Purchased:\n\n";
+
+            for (const item in cart) {
+                if (cart[item] > 0) {
+                    const itemTotalCost = cart[item] * menuPrices[item];
+                    totalOrderCost += itemTotalCost;
+                    checkoutMessage += `${item}: Quantity ${cart[item]}, Total Cost: $${itemTotalCost.toFixed(2)}\n`;
+                    // Reset quantity of item in cart to 0
+                    cart[item] = 0;
+                }
+            }
+
+            checkoutMessage += `\nTotal Order Cost: $${totalOrderCost.toFixed(2)}`;
+            alert(checkoutMessage);
+
+            // Update cart display after checkout
+            updateCartDisplay();
+        }
+
+        // Call the functions to display the menu
+        displayMenuJSON();
+    </script>
+</body>
+</html>
